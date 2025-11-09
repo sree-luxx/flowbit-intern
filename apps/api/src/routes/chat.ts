@@ -4,6 +4,17 @@ export const chatRouter = Router();
 
 const VANNA_SERVICE_URL = process.env.VANNA_SERVICE_URL || 'http://localhost:8000';
 
+interface VannaResponse {
+  sql?: string;
+  data?: any[];
+  chart?: {
+    type?: string;
+    config?: any;
+  };
+  summary?: string;
+  error?: string;
+}
+
 // Proxy chat requests to Vanna service
 chatRouter.post('/', async (req, res) => {
   try {
@@ -29,7 +40,7 @@ chatRouter.post('/', async (req, res) => {
       throw new Error(`Vanna service error: ${response.status} ${errorText}`);
     }
 
-    const data = await response.json();
+    const data = (await response.json()) as VannaResponse;
     
     // Log the response to debug chart generation
     console.log('📊 Vanna response:', {
